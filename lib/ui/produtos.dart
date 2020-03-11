@@ -23,7 +23,8 @@ class ProdutosState extends State<Produtos> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    urlListPro.clear();
+    getImages();
+    //urlListPro.clear();
     //getImages();
   }
   @override
@@ -33,24 +34,28 @@ class ProdutosState extends State<Produtos> {
 
   Future<List> getImages() async{
     await Future.delayed(Duration(seconds: 3));
-
     getData() async {
-
       return await Firestore.instance.collection('produto').getDocuments();
     }
-    getData().then((val){
-      urlListPro.clear();
-      for (DocumentSnapshot doc in val.documents){
-        urlListPro.add(doc.data['url'].toString());
+    try {
+      print("ENTROU NO CATCH");
+      getData().then((val) {
+        urlListPro.clear();
+        for (DocumentSnapshot doc in val.documents) {
+          urlListPro.add(doc.data['url'].toString());
+        }
       }
-    });
+      );
+    }
+    catch(e){
+      print(e);
+    }
     print("Do getImages");
       print(urlListPro.length);
       print("----------");
-
       return urlListPro;
   }
-  Widget Produtos() {
+  Widget produtos() {
     return FutureBuilder<List>(
         future: getImages(),
         builder: (context, snapshot) {
@@ -59,7 +64,7 @@ class ProdutosState extends State<Produtos> {
               print("NONE");
               return null;
             case ConnectionState.waiting:
-              print("WAITING");
+              print("WAITING DO PRODUTOS");
               return CircularProgressIndicator();
             default:
               if (!snapshot.hasError){
@@ -67,7 +72,7 @@ class ProdutosState extends State<Produtos> {
               } else {
                 print(snapshot.data);
                 print("ERRO");
-                return HomePage();
+                return showProdutos();
               }
           }
         }
@@ -75,7 +80,8 @@ class ProdutosState extends State<Produtos> {
         }
     Widget showProdutos() {
     print("Lista do SHOW");
-      print(urlListPro.length);
+    print(urlListPro.length);
+    print("INICIANDO O SHOWPRODUTOS");
       return Align(
         alignment: Alignment.bottomCenter,
         child:Container(height: 60,width: 370,

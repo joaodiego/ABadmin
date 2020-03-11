@@ -42,7 +42,9 @@ class WavesPrevisionState extends State<WavesPrevision> {
 
 
   Future<List> getPrev() async{
+
     listaPrev.clear();
+
     QuerySnapshot snapshot = await Firestore.instance.collection('prevision').
     orderBy('dia').getDocuments();
     for(DocumentSnapshot doc in snapshot.documents){

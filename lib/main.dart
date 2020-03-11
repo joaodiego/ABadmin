@@ -50,7 +50,16 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     print("eXecuta o INIT do MAIN");
-    Produtos();
+
+  }
+
+  Future<Null> _handleRefresh() async {
+    setState(() {
+      wp.listaPrev.clear();
+      prod.getImages();
+    });
+
+    return null;
   }
 
   @override
@@ -122,20 +131,23 @@ class _HomePageState extends State<HomePage> {
                 ),
           ),
           child:RefreshIndicator(
-                  onRefresh: () => Navigator.of(context)
+                  onRefresh: _handleRefresh, /*=> Navigator.of(context)
                       .push(MaterialPageRoute<Null>(
                       builder: (BuildContext context) {
                         return HomePage();
                       }
                     )
-                  ),
-                  child:Column( mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Expanded(
-                        child:wp.previsao()
-                    ),
-                    Divider(),
-                  prod.Produtos()],)
+                  ),*/
+                  child:Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Expanded(
+                          child:wp.previsao()
+                        ),
+                        Divider(),
+                        prod.produtos()
+                      ],
+                  )
                 ),
           ),
                            /*

@@ -19,13 +19,13 @@ class ProdutosState extends State<Produtos> {
   String _url;
   List urlListPro = [];
 
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getImages();
-    //urlListPro.clear();
-    //getImages();
+
   }
   @override
   Widget build(BuildContext context) {
@@ -33,27 +33,25 @@ class ProdutosState extends State<Produtos> {
   }
 
   Future<List> getImages() async{
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 2));
     getData() async {
       return await Firestore.instance.collection('produto').getDocuments();
     }
     try {
-      print("ENTROU NO CATCH");
-      getData().then((val) {
+        getData().then((val) {
         urlListPro.clear();
         for (DocumentSnapshot doc in val.documents) {
           urlListPro.add(doc.data['url'].toString());
         }
       }
+
       );
     }
     catch(e){
       print(e);
     }
-    print("Do getImages");
-      print(urlListPro.length);
-      print("----------");
-      return urlListPro;
+    print("getImages Produtos: "+ '${urlListPro.length}' + '   ------>' );
+    return urlListPro;
   }
   Widget produtos() {
     return FutureBuilder<List>(
@@ -67,11 +65,15 @@ class ProdutosState extends State<Produtos> {
               print("WAITING DO PRODUTOS");
               return CircularProgressIndicator();
             default:
-              if (!snapshot.hasError){
-                return showProdutos();
+              if (snapshot.hasError){
+                return Center(
+                    child: Text("Desculpe - Carregando :(",
+                      style: TextStyle(color: Colors.amber,
+                          fontSize: 25.0),
+                      textAlign: TextAlign.center,)
+                );
               } else {
-                print(snapshot.data);
-                print("ERRO");
+                print('Chegou aqui');
                 return showProdutos();
               }
           }
@@ -79,9 +81,6 @@ class ProdutosState extends State<Produtos> {
           );
         }
     Widget showProdutos() {
-    print("Lista do SHOW");
-    print(urlListPro.length);
-    print("INICIANDO O SHOWPRODUTOS");
       return Align(
         alignment: Alignment.bottomCenter,
         child:Container(height: 60,width: 370,
@@ -94,7 +93,6 @@ class ProdutosState extends State<Produtos> {
               //gridDelegate:
               //new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),
               itemBuilder: (BuildContext context, int index) {
-                //getImages();
                 return new GestureDetector(
                   child: new Card(
                     shape: RoundedRectangleBorder(borderRadius:

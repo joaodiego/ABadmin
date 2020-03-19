@@ -93,16 +93,14 @@ class ProductsDeleteState extends State<ProductsDelete> {
     QuerySnapshot snapshot = await Firestore.instance.
     collection('produto').where('desc',isEqualTo: d).getDocuments();
 
-    print('IMPRIMINDO O SNAP DO DELETE:');
-    //print(snapshot.documents[0].documentID);
 
     DocumentReference snapshot2 = await Firestore.instance.
     collection('produto').document(snapshot.documents[0].documentID);
     snapshot2.delete();
 
-    print('DELETADO');
+    setState(() {
 
-    //snapshot.delete();
+    });
   }
 
   Widget _getDataSnap(){

@@ -53,6 +53,7 @@ class _ProductsState extends State<Products> {
         setUrlAndDesc(_uploadedFileURL,_descProd);
       });
     });
+    _descProdController.clear();
   }
   void _clearSelection(){
     setState(() {

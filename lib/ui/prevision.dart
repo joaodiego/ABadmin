@@ -24,6 +24,9 @@ class WavesPrevisionState extends State<WavesPrevision> {
   Produtos prod = Produtos();
   String day = 'dia';
   HomePage hp = new HomePage();
+  AdminCrud ad = new AdminCrud();
+  SimpleBarChart chart = new SimpleBarChart.withSampleData();
+  List listaPrev = [];
 
   @override
   Widget build(BuildContext context) {
@@ -36,29 +39,24 @@ class WavesPrevisionState extends State<WavesPrevision> {
     getPrev();
   }
 
-  AdminCrud ad = new AdminCrud();
-  SimpleBarChart chart = new SimpleBarChart.withSampleData();
-  List listaPrev = [];
 
 
   Future<List> getPrev() async{
-
     listaPrev.clear();
-
     QuerySnapshot snapshot = await Firestore.instance.collection('prevision').
     orderBy('dia').getDocuments();
     for(DocumentSnapshot doc in snapshot.documents){
-
-      if ((int.parse(doc.data['dia'].toString().substring(0,2)) >=
+      if (
+          (int.parse(doc.data['dia'].toString().substring(0,2)) >=
           int.parse(DateTime.now().day.toString()))
                              &&
           (int.parse(doc.data['dia'].toString().substring(3,5)) ==
-              (int.parse(DateTime.now().month.toString()))))
+          int.parse(DateTime.now().month.toString()))
+      )
            {
             listaPrev.add(doc);
            }
       }
-
     return listaPrev;
   }
   Widget previsao() {
@@ -68,15 +66,16 @@ class WavesPrevisionState extends State<WavesPrevision> {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
             case ConnectionState.waiting:
+             print('WAITING DO PREVISION');
              return Center(
-                  child: Text("Carregando Dados...",
+                  child: Text("Carregando ....",
                     style: TextStyle(color: Colors.amber,
                         fontSize: 25.0),
                     textAlign: TextAlign.center,
                   )
               );
             default:
-              if (snapshot.hasError) {
+              if (snapshot.hasError){
                 return Center(
                     child: Text("Erro ao Carregar Dados :(",
                       style: TextStyle(color: Colors.amber,

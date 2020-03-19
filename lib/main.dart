@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 import 'package:ABadmin/controller/adminDashboard.dart';
+import 'package:ABadmin/controller/previsionAdmin.dart';
 import 'package:ABadmin/ui/login.dart';
 import 'package:ABadmin/ui/prevision.dart';
 import 'package:ABadmin/ui/produtos.dart';
@@ -54,11 +55,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<Null> _handleRefresh() async {
+    print("____________________________________");
+    print('Iniciou o Refresh');
     setState(() {
       wp.listaPrev.clear();
-      prod.getImages();
+      print('${prod.urlListPro.length}');
+      //prod.urlListPro.clear();
     });
-
     return null;
   }
 
@@ -203,7 +206,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.of(context)
                       .push(
                       MaterialPageRoute<Null>(builder: (BuildContext context) {
-                        return Mapa();
+                        return PrevisionAdmin();
                       }
                       ));
                 }
@@ -251,8 +254,8 @@ class _HomePageState extends State<HomePage> {
                 fontSize: 10
             ),)),
             BottomNavigationBarItem(
-                icon: Icon(MdiIcons.googleMaps,),
-                title: Text("Aloha Beach",style:TextStyle(fontSize: 10),)
+                icon: Icon(MdiIcons.waves,),
+                title: Text("Prevision",style:TextStyle(fontSize: 10),)
 
             ),
             BottomNavigationBarItem(

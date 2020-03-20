@@ -222,7 +222,6 @@ class AdminCrudState extends State<AdminCrud> {
               onPressed: () => _selectDate(context),
               child: Text('DATA')
             ),
-
             _textFormField("Vento",ventoController),
             _textFormField("Maré",mareController),
             _textFormField("Período",periodoController),
@@ -251,7 +250,6 @@ class AdminCrudState extends State<AdminCrud> {
                     backgroundColor:Colors.redAccent ,),
                   );
                 }
-
               },
               child: Text('Enviar'),
             ),

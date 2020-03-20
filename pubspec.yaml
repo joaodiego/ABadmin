@@ -45,6 +45,7 @@ dependencies:
   mask_text_input_formatter: ^1.0.5
   expand_widget: ^0.2.0+2
   google_maps_flutter: ^0.5.11
+  masked_text: ^0.0.6
 
 flutter_icons:
   android: true

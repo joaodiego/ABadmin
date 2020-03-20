@@ -5,6 +5,13 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
+import 'package:masked_text/masked_text.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:ABadmin/ui/login.dart';
+import 'package:ABadmin/ui/guardaria.dart';
+import 'package:ABadmin/ui/aula.dart';
+import 'package:ABadmin/main.dart';
+import 'package:ABadmin/controller/productsDelete.dart';
 
 class PrevisionAdmin extends StatefulWidget {
   @override
@@ -14,10 +21,10 @@ class PrevisionAdmin extends StatefulWidget {
 class _PrevisionAdminState extends State<PrevisionAdmin> {
   final _formKey = GlobalKey<FormState>();
   DateTime selectedDate = DateTime.now();
-  String data;
+  String data = 'Nenhuma!!!';
   var maskFormatter = new MaskTextInputFormatter(mask: '##:##',
       filter: { "#": RegExp(r'[0-9]') });
-
+  Map <String,dynamic> listaPrev = {};
   TextEditingController diaController = TextEditingController();
   TextEditingController ventoController = TextEditingController();
   TextEditingController mareController = TextEditingController();
@@ -25,10 +32,19 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
   TextEditingController enchenteController = TextEditingController();
   TextEditingController preamarController = TextEditingController();
   TextEditingController vazanteController = TextEditingController();
-  // String dia = diaController.toString();
+
+  @override
+  void initState() {
+    super.initState();
+    delOldPrevision();
+    //getPrevRemove();
+    listaPrev.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         home:Scaffold(
         body:Builder(
         builder: (context) =>
@@ -49,12 +65,15 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
                           onPressed: () => _selectDate(context),
                             child: Text('DATA')
                           ),
-                      _textFormField("Vento",ventoController),
-                      _textFormField("Maré",mareController),
-                      _textFormField("Período",periodoController),
-                      _textFormField("Enchente",enchenteController),
-                      _textFormField("Preamar",preamarController),
-                      _textFormField("Vazante",vazanteController),
+                      Text('Data Selecionada: ' + '${data}',
+                        style: TextStyle(color: Colors.redAccent)
+                        ,),
+                      _maskedTextField("Vento",ventoController),
+                      _maskedTextField("Maré",mareController),
+                      _maskedTextField("Período",periodoController),
+                      _maskedTextField("Enchente",enchenteController),
+                      _maskedTextField("Preamar",preamarController),
+                      _maskedTextField("Vazante",vazanteController),
                       Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: RaisedButton(
@@ -69,6 +88,7 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
                           .push(
                           MaterialPageRoute<Null>(builder:
                             (BuildContext context) {
+
                              return new PrevisionAdmin();
                             }
                           )
@@ -81,9 +101,171 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
                         );
                         }
                       },
-          child: Text('Enviar'),
-          ),),],),],),),),),),),);
-  }
+                        child: Text('Enviar'),
+
+                    ),),],),
+                    Divider(),
+
+                    Text('.'),
+                    Text('.'),
+                    Text('.'),
+                    Text('Previsões disponiveis para exclusão:',
+                    style: TextStyle(fontSize: 20),),
+                    FutureBuilder<Map>(
+                    future: getPrevRemove(),
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
+                          case ConnectionState.none:
+                          case ConnectionState.waiting:
+                            return Center(
+                              child: Text("Carregando Dados...",
+                              style: TextStyle(color: Colors.amber,
+                              fontSize: 25.0),
+                              textAlign: TextAlign.center,)
+                            );
+                            default:
+                    if (snapshot.hasError) {
+                    return Center(
+                    child: Text("Erro ao Carregar Dados :(",
+                    style: TextStyle(color: Colors.amber,
+                    fontSize: 25.0),
+                    textAlign: TextAlign.center,)
+                    );
+                    } else {
+                      return Container(
+                        color: Colors.white12,
+                        margin: EdgeInsets.all(20),
+                        height: 500,
+                        //padding: EdgeInsets.only(top: 20),
+                        width: 300,
+                        child: ListView.builder(
+                          itemCount: listaPrev.length,
+                          itemBuilder: (BuildContext ctxt, int index) {
+                            return Dismissible(
+                              background: Container(color: Colors.red),
+                              key: Key("${listaPrev[index]}"),
+                              onDismissed: (direction) {
+                                delPrevision("${listaPrev.keys.elementAt(index)}");
+                                setState(() {
+                                  listaPrev.remove(index);
+                                });
+                                Scaffold
+                                    .of(context)
+                                    .showSnackBar(SnackBar(content: Text("Excluído")));
+                              },
+                              child: Card(color: Colors.lightBlueAccent,
+                                  child:ListTile
+                                    (title:Text
+                                    ('${listaPrev.values.elementAt(index)['dia']}'
+                                    ,textAlign: TextAlign.center,),
+                                    leading: Icon(Icons.delete),
+                                  )
+                              ),
+                            );
+                          },
+                        ),
+                    );
+                      }
+                    }
+                    }
+                    )
+                    ],),),),
+
+
+        ),),
+        bottomNavigationBar: BottomNavigationBar(
+                      elevation: 8,
+                      backgroundColor: Colors.white,
+                      type: BottomNavigationBarType.fixed,
+                      onTap:(int index) {
+                      switch (index) {
+                      case 0:
+                      {
+                      Navigator.of(context)
+                          .push(
+                      MaterialPageRoute<Null>(builder: (BuildContext context) {
+                      return Aula();
+                      }
+                      ));
+                      }
+                      break;
+                      case 1:
+                      {
+                      Navigator.of(context)
+                          .push(
+                      MaterialPageRoute<Null>(builder: (BuildContext context) {
+                      return ProductsDelete();
+                      }
+                      ));
+                      }
+                      break;
+                      case 2:
+                      {
+                      Navigator.of(context)
+                          .push(
+                      MaterialPageRoute<Null>(builder: (BuildContext context) {
+                      return PrevisionAdmin();
+                      }
+                      ));
+                      }
+                      break;
+                      case 3:
+                      {
+                      Navigator.of(context)
+                          .push(
+                      MaterialPageRoute<Null>(builder: (BuildContext context) {
+                      return Guardaria();
+                      }
+                      ));
+                      }
+                      break;
+                      case 4:
+                      {
+                      Navigator.of(context)
+                          .push(
+                      MaterialPageRoute<Null>(builder: (BuildContext context) {
+                      return LoginPage();
+                      }
+                      ));
+                      }
+                      break;
+                      default:
+                      {
+                      Navigator.of(context)
+                          .push(
+                      MaterialPageRoute<Null>(builder: (BuildContext context) {
+                      return HomePage();
+                      }));
+                      }
+                      }
+                      },
+                      items: [
+                      BottomNavigationBarItem(
+                      icon: Image(image:AssetImage("assets/images/surfboy.png"),
+                      width: 30,height: 27,
+                      color: Colors.black54,),
+                      title: Text("Aulas",style:TextStyle(
+                      fontSize: 9, color: Colors.black45
+                      ),)),
+                      BottomNavigationBarItem(
+                      icon: Icon(Icons.shopping_cart,), title: Text("Produtos",style:TextStyle(
+                      fontSize: 10
+                      ),)),
+                      BottomNavigationBarItem(
+                      icon: Icon(MdiIcons.waves,),
+                      title: Text("Prevision",style:TextStyle(fontSize: 10),)
+
+                      ),
+                      BottomNavigationBarItem(
+                      icon: Icon(MdiIcons.homeRoof,), title: Text("Guardaria",style:TextStyle(
+                      fontSize: 10
+                      ),)),
+
+                      BottomNavigationBarItem(
+                      icon: Icon(MdiIcons.accountCircle,), title: Text("Admin",style:TextStyle(
+                      fontSize: 10,
+                      ),)),],),),);
+                    }
 
   void setPrevision() async{
     QuerySnapshot snapshot = await Firestore.instance.collection('prevision').getDocuments();
@@ -103,8 +285,6 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
     DocumentReference snapshot = await Firestore.instance.collection('prevision').document(index);
     snapshot.delete();
   }
-
-  Map <String,dynamic> listaPrev = {};
 
   void delOldPrevision() async {
     //listaPrev.keys.elementAt(index)
@@ -133,13 +313,7 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
     }
     return listaPrev;
   }
-  @override
-  void initState() {
-    super.initState();
-    delOldPrevision();
-    //getPrevRemove();
-    listaPrev.clear();
-  }
+
   Widget _textFormField(label,controller){
     return Center(
       child: Container(
@@ -162,6 +336,17 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
           },
         ),
       ),
+    );
+  }
+  Widget _maskedTextField(label,controller){
+    return MaskedTextField
+      (
+      maskedTextFieldController: controller,
+      mask: "xx:xx",
+      maxLength: 5,
+      keyboardType: TextInputType.number,
+      inputDecoration: new InputDecoration(
+          hintText: "Digite aqui", labelText: label),
     );
   }
   Widget _textFormFieldWithMask(label,controller,mask){

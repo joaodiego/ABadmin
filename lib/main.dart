@@ -1,42 +1,28 @@
 import 'dart:async';
-import 'dart:collection';
-import 'dart:io';
-import 'package:ABadmin/controller/adminDashboard.dart';
 import 'package:ABadmin/controller/previsionAdmin.dart';
 import 'package:ABadmin/ui/login.dart';
 import 'package:ABadmin/ui/prevision.dart';
 import 'package:ABadmin/ui/produtos.dart';
 import 'package:ABadmin/ui/guardaria.dart';
-import 'package:ABadmin/controller/productsDelete.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:ABadmin/controller/productsAdmin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
-import 'package:transparent_image/transparent_image.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'dart:convert';
 import 'package:ABadmin/ui/aula.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:ABadmin/ui/mapa.dart';
-import 'package:image/image.dart' as Img;
 
 
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+   WidgetsFlutterBinding.ensureInitialized();
    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
-
-
    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
        .then((_) {
-     WidgetsFlutterBinding.ensureInitialized();
-     runApp(HomePage(
-     ));
-   });
+   WidgetsFlutterBinding.ensureInitialized();
+   runApp(HomePage());
+   }
+   );
 }
 class HomePage extends StatefulWidget {
   @override
@@ -51,7 +37,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     print("eXecuta o INIT do MAIN");
-
   }
 
   Future<Null> _handleRefresh() async {
@@ -60,7 +45,6 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       wp.listaPrev.clear();
       print('${prod.urlListPro.length}');
-      //prod.urlListPro.clear();
     });
     return null;
   }
@@ -134,7 +118,8 @@ class _HomePageState extends State<HomePage> {
                 ),
           ),
           child:RefreshIndicator(
-                  onRefresh: _handleRefresh, /*=> Navigator.of(context)
+                  onRefresh: _handleRefresh,
+              /*=> Navigator.of(context)
                       .push(MaterialPageRoute<Null>(
                       builder: (BuildContext context) {
                         return HomePage();
@@ -196,7 +181,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.of(context)
                       .push(
                       MaterialPageRoute<Null>(builder: (BuildContext context) {
-                        return ProductsDelete();
+                        return ProductsAdmin();
                       }
                       ));
                 }

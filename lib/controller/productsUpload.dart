@@ -21,18 +21,11 @@ class _ProductsState extends State<Products> {
   final _formKey = GlobalKey<FormState>();
 
   void setUrlAndDesc(u,d) async{
-    print(u);
-    print("--------------");
-
     QuerySnapshot snapshot = await Firestore.instance.collection('produto').
     getDocuments();
     Firestore.instance.collection('produto').document().
     setData({'url':u,'desc':d});
-    //Firestore.instance.collection('produto').document().
-    //setData({'desc':d});
-
   }
-
   Future chooseFile() async {
     await ImagePicker.pickImage(source: ImageSource.gallery).then((image) {
       setState(() {

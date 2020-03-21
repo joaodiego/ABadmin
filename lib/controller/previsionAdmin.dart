@@ -7,11 +7,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
 import 'package:masked_text/masked_text.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:ABadmin/ui/login.dart';
 import 'package:ABadmin/ui/guardaria.dart';
 import 'package:ABadmin/ui/aula.dart';
 import 'package:ABadmin/main.dart';
-import 'package:ABadmin/controller/productsDelete.dart';
+import 'package:ABadmin/controller/productsAdmin.dart';
 
 class PrevisionAdmin extends StatefulWidget {
   @override
@@ -43,24 +42,25 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home:Scaffold(
+    return
+      Scaffold(
+          appBar: AppBar(
+            title: Text('Previsões'),
+          ),
         body:Builder(
         builder: (context) =>
         SingleChildScrollView(
           child:Form(
             key: _formKey,
             child:Container(
-            margin: EdgeInsets.only(top:40),
+            margin: EdgeInsets.only(top:20,left: 10,right: 10),
               child:Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Text('INSERIR PREVISÕES'),
                       Column(
                           children: <Widget>[
-                          SizedBox(height: 30.0,),
+                          SizedBox(height: 20.0,),
                           RaisedButton(
                           onPressed: () => _selectDate(context),
                             child: Text('DATA')
@@ -109,7 +109,7 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
                     Text('.'),
                     Text('.'),
                     Text('.'),
-                    Text('Previsões disponiveis para exclusão:',
+                    Text('Deslize para Exclusão:',
                     style: TextStyle(fontSize: 20),),
                     FutureBuilder<Map>(
                     future: getPrevRemove(),
@@ -133,7 +133,7 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
                     );
                     } else {
                       return Container(
-                        color: Colors.white12,
+                        color: Colors.white,
                         margin: EdgeInsets.all(20),
                         height: 500,
                         //padding: EdgeInsets.only(top: 20),
@@ -184,7 +184,7 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
                       Navigator.of(context)
                           .push(
                       MaterialPageRoute<Null>(builder: (BuildContext context) {
-                      return Aula();
+                      return HomePage();
                       }
                       ));
                       }
@@ -194,7 +194,7 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
                       Navigator.of(context)
                           .push(
                       MaterialPageRoute<Null>(builder: (BuildContext context) {
-                      return ProductsDelete();
+                      return ProductsAdmin();
                       }
                       ));
                       }
@@ -224,7 +224,7 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
                       Navigator.of(context)
                           .push(
                       MaterialPageRoute<Null>(builder: (BuildContext context) {
-                      return LoginPage();
+                      return Aula();
                       }
                       ));
                       }
@@ -241,10 +241,11 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
                       },
                       items: [
                       BottomNavigationBarItem(
-                      icon: Image(image:AssetImage("assets/images/surfboy.png"),
+                      icon: Icon(Icons.home,),
+                      /*Image(image:AssetImage("assets/images/surfboy.png"),
                       width: 30,height: 27,
-                      color: Colors.black54,),
-                      title: Text("Aulas",style:TextStyle(
+                      color: Colors.black54,),*/
+                      title: Text("Home",style:TextStyle(
                       fontSize: 9, color: Colors.black45
                       ),)),
                       BottomNavigationBarItem(
@@ -262,9 +263,13 @@ class _PrevisionAdminState extends State<PrevisionAdmin> {
                       ),)),
 
                       BottomNavigationBarItem(
-                      icon: Icon(MdiIcons.accountCircle,), title: Text("Admin",style:TextStyle(
-                      fontSize: 10,
-                      ),)),],),),);
+                         icon: Image(image:AssetImage("assets/images/surfboy.png"),
+                         width: 30,height: 27,
+                         color: Colors.black54,),
+                         title: Text("Aulas",style:TextStyle(
+                         fontSize: 9, color: Colors.black45
+          ),)),],
+        ),);
                     }
 
   void setPrevision() async{

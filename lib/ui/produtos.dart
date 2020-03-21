@@ -22,8 +22,8 @@ class ProdutosState extends State<Produtos> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    urlListPro.clear();
     getImages();
 
   }
@@ -31,27 +31,24 @@ class ProdutosState extends State<Produtos> {
   Widget build(BuildContext context) {
     return Container();
   }
-
   Future<List> getImages() async{
-    await Future.delayed(Duration(seconds: 2));
+    urlListPro.clear();
     getData() async {
       return await Firestore.instance.collection('produto').getDocuments();
     }
-    try {
-        getData().then((val) {
-        urlListPro.clear();
-        for (DocumentSnapshot doc in val.documents) {
-          urlListPro.add(doc.data['url'].toString());
-        }
-      }
-
-      );
+    getData().then((val) {
+          for (DocumentSnapshot doc in val.documents) {
+           urlListPro.add(doc.data['url'].toString());
+           }
+          }
+        );
+    if(urlListPro.isEmpty){
+      await Future.delayed(Duration(seconds: 5,));
+      return urlListPro;
     }
-    catch(e){
-      print(e);
+    else {
+      return urlListPro;
     }
-    print("getImages Produtos: "+ '${urlListPro.length}' + '   ------>' );
-    return urlListPro;
   }
   Widget produtos() {
     return FutureBuilder<List>(
@@ -65,15 +62,19 @@ class ProdutosState extends State<Produtos> {
               print("WAITING DO PRODUTOS");
               return CircularProgressIndicator();
             default:
-              if (snapshot.hasError){
+              if (snapshot.data.isEmpty){
                 return Center(
                     child: Text("Desculpe - Carregando :(",
                       style: TextStyle(color: Colors.amber,
                           fontSize: 25.0),
                       textAlign: TextAlign.center,)
                 );
-              } else {
-                print('Chegou aqui');
+              }
+              if (snapshot.data==null){
+                print(snapshot.data);
+                return CircularProgressIndicator();
+              }
+              else {
                 return showProdutos();
               }
           }
